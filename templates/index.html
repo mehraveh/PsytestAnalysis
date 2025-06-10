@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>بررسی نمره پرخاشگری</title>
+</head>
+<body>
+    <h2>جستجوی نمره پرخاشگری دانش‌آموز</h2>
+    <form method="POST">
+        <label for="student_name">نام و نام خانوادگی:</label>
+        <input type="text" name="student_name" required>
+        <button type="submit">بررسی</button>
+    </form>
+
+    {% if result %}
+        <hr>
+        {% if result.error %}
+            <p style="color:red;">{{ result.error }}</p>
+        {% else %}
+            <h3>نتایج برای: {{ result.نام }}</h3>
+            <p>جنسیت: {{ result.جنسیت }}</p>
+            <p>عامل ۱: {{ result["عامل ۱"] }} → {% if result["پرخاشگر عامل ۱"] %} پرخاشگر {% else %} عادی {% endif %}</p>
+            <p>عامل ۲: {{ result["عامل ۲"] }} → {% if result["پرخاشگر عامل ۲"] %} پرخاشگر {% else %} عادی {% endif %}</p>
+            <p>عامل ۳: {{ result["عامل ۳"] }} → {% if result["پرخاشگر عامل ۳"] %} پرخاشگر {% else %} عادی {% endif %}</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
