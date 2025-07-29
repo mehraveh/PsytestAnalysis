@@ -40,57 +40,28 @@
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">ارزیابی</button>
             </div>
-        </form>
+        <form method="POST" action="/analyze">
+    <div class="mb-3">
+        <label for="test_name" class="form-label">انتخاب آزمون:</label>
+        <select name="test_name" class="form-select" required>
+            <option value="">-- انتخاب آزمون --</option>
+            <option value="aggression">پرسش‌نامه پرخاشگری رابطه‌ای و آشکار کودکان دبستانی</option>
+            <option value="arjabi">مقیاس عرجبی خودکنترولی</option>
+            <option value="cbcl">چک‌لیست رفتاری کودکان (CBCL)</option>
+            <option value="csbs">مقیاس رفتار اجتماعی کودک (CSBS)</option>
+            <option value="difficulties">مقیاس دشواری‌های تنظیم هیجانی</option>
+        </select>
+    </div>
 
-        {% if result %}
-            <div class="mt-4">
-                <hr>
-                {% if result.error %}
-                    <div class="alert alert-danger text-center">{{ result.error }}</div>
-                {% else %}
-                    <h4 class="text-success">نتایج برای: {{ result.نام }}</h4>
-                    <p>جنسیت: {{ result.جنسیت }}</p>
+    <div class="mb-3">
+        <label for="national_id" class="form-label">کد ملی دانش‌آموز:</label>
+        <input type="text" name="national_id" class="form-control" required>
+    </div>
 
-                    <div id="gauge1" style="height:250px; margin-bottom: 30px;"></div>
-                    <div id="gauge2" style="height:250px; margin-bottom: 30px;"></div>
-                    <div id="gauge3" style="height:250px;"></div>
-
-                   <script>
-                        const f1 = {{ result["عامل ۱"] }};
-                        const f2 = {{ result["عامل ۲"] }};
-                        const f3 = {{ result["عامل ۳"] }};
-                    
-                        function drawGauge(id, value, title, max=28) {
-                            Plotly.newPlot(id, [{
-                                type: "indicator",
-                                mode: "gauge+number+delta",
-                                value: value,
-                                title: { text: title, font: { size: 18 } },
-                                gauge: {
-                                    axis: { range: [0, max], tickwidth: 1, tickcolor: "darkgray" },
-                                    bar: { color: "transparent" },  // پنهان‌سازی میله
-                                    steps: [
-                                        { range: [0, max * 0.4], color: "#e6f2ff" },
-                                        { range: [max * 0.4, max * 0.7], color: "#99ccff" },
-                                        { range: [max * 0.7, max], color: "#0073e6" }
-                                    ],
-                                    threshold: {
-                                        line: { color: "red", width: 4 },
-                                        thickness: 0.75,
-                                        value: value
-                                    }
-                                }
-                            }], {
-                                margin: { t: 20, b: 20 },
-                                height: 250
-                            });
-                        }
-                    
-                        drawGauge("gauge1", f1, "عامل ۱");
-                        drawGauge("gauge2", f2, "عامل ۲");
-                        drawGauge("gauge3", f3, "عامل ۳");
-</script>
-                {% endif %}
+    <div class="text-center">
+        <button type="submit" class="btn btn-primary">ارزیابی</button>
+    </div>
+</form>
             </div>
         {% endif %}
     </div>
