@@ -48,7 +48,7 @@ def home():
             return render_template("form.html", tests=test_names, result={"error": "آزمون نامعتبر است"})
 
         return redirect(url_for("results", test_code=test, national_id=national_id))
-    return render_template("form.html", tests=test_names)
+    return render_template("index.html", tests=test_names)
 
 @app.route("/results")
 def results():
