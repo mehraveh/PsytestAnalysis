@@ -3,6 +3,9 @@ import random
 
 app = Flask(__name__)
 
+csv_url = "https://docs.google.com/spreadsheets/d/1bpZjmiBsEnriX6y34ryvtho3vhn7rQ9t13kWyQA0cVQ/gviz/tq?tqx=out:csv&gid=420825805"
+df = pd.read_csv(csv_url).dropna(how='all')
+
 # ----- Dummy score functions for each test -----
 def calculate_ders_scores(national_id):
     return {"عامل ۱": random.randint(10, 25), "عامل ۲": random.randint(10, 25), "عامل ۳": random.randint(10, 25)}
