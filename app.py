@@ -1,62 +1,69 @@
-from flask import Flask, request, render_template
-import pandas as pd
+from flask import Flask, render_template, request, redirect, url_for
+import random
 
 app = Flask(__name__)
 
-# نگاشت اسم تست به لینک Google Sheets
-TEST_SHEETS = {
-    "پرخاشگری": "https://docs.google.com/spreadsheets/d/1bpZjmiBsEnriX6y34ryvtho3vhn7rQ9t13kWyQA0cVQ/gviz/tq?tqx=out:csv&gid=420825805",
+# ----- Dummy score functions for each test (we'll update them later) -----
+
+def calculate_ders_scores(national_id):
+    return {"عامل ۱": random.randint(10, 25), "عامل ۲": random.randint(10, 25), "عامل ۳": random.randint(10, 25)}
+
+def calculate_csbs_scores(national_id):
+    return {"عامل ۱": random.randint(5, 15), "عامل ۲": random.randint(5, 15), "عامل ۳": random.randint(5, 15)}
+
+def calculate_cbcl_scores(national_id):
+    return {"عامل ۱": random.randint(20, 60), "عامل ۲": random.randint(20, 60), "عامل ۳": random.randint(20, 60)}
+
+def calculate_scrs_scores(national_id):
+    return {"عامل ۱": random.randint(5, 20), "عامل ۲": random.randint(5, 20), "عامل ۳": random.randint(5, 20)}
+
+def calculate_anger_scores(national_id):
+    return {"عامل ۱": random.randint(5, 15), "عامل ۲": random.randint(5, 15), "عامل ۳": random.randint(5, 15)}
+
+# Mapping of test codes to function references
+test_functions = {
+    "DERS": calculate_ders_scores,
+    "CSBS": calculate_csbs_scores,
+    "CBCL": calculate_cbcl_scores,
+    "SCRS": calculate_scrs_scores,
+    "RIGHT_ANGLE": calculate_anger_scores
 }
 
-score_map = {
-    'هرگز یا به ندرت': 1,
-    'یک‌ بار در ماه': 2,
-    'یک بار در هفته': 3,
-    'اغلب روزا': 4,
+test_names = {
+    "DERS": "مقیاس دشواری‌های تنظیم هیجانی",
+    "CSBS": "مقیاس رفتار اجتماعی کودک",
+    "CBCL": "چک‌لیست رفتاری کودکان",
+    "SCRS": "مقیاس عرجبی خودکنترلی",
+    "RIGHT_ANGLE": "پرسش‌نامه پرخاشگری رابطه‌ای و آشکار"
 }
 
-def evaluate_student(name, df):
-    row = df[df['نام و نام خانوادگی'] == name]
-    if row.empty:
-        return {"error": f"دانش‌آموزی با نام '{name}' یافت نشد."}
-
-    gender = row['جنسیت'].values[0].strip()
-
-    columns = df.columns
-    factor_1_cols = columns[10:17]
-    factor_2_cols = columns[17:25]
-    factor_3_cols = columns[4:10]
-
-    def score_factor(cols):
-        return sum(score_map.get(str(row[col].values[0]).strip(), 0) for col in cols)
-
-    f1 = score_factor(factor_1_cols)
-    f2 = score_factor(factor_2_cols)
-    f3 = score_factor(factor_3_cols)
-
-    return {
-        'نام': name,
-        'جنسیت': gender,
-        'عامل ۱': f1,
-        'پرخاشگر عامل ۱': f1 > (8 if gender == 'دختر' else 10),
-        'عامل ۲': f2,
-        'پرخاشگر عامل ۲': f2 > (18 if gender == 'دختر' else 17),
-        'عامل ۳': f3,
-        'پرخاشگر عامل ۳': f3 > (15 if gender == 'دختر' else 16)
-    }
+# ----------------- Routes --------------------
 
 @app.route("/", methods=["GET", "POST"])
-def index():
-    result = None
-    selected_test = None
-
+def home():
     if request.method == "POST":
-        selected_test = request.form.get("test_name")
-        student_name = request.form.get("student_name")
+        test = request.form.get("test_name")
+        national_id = request.form.get("national_id")
+        if test not in test_functions:
+            return render_template("form.html", tests=test_names, result={"error": "آزمون نامعتبر است"})
 
-        url = TEST_SHEETS.get(selected_test)
-        if url:
-            df = pd.read_csv(url).dropna(how='all')
-            result = evaluate_student(student_name, df)
+        return redirect(url_for("results", test_code=test, national_id=national_id))
+    return render_template("form.html", tests=test_names)
 
-    return render_template("index.html", tests=TEST_SHEETS.keys(), result=result)
+@app.route("/results")
+def results():
+    test_code = request.args.get("test_code")
+    national_id = request.args.get("national_id")
+    calculate_fn = test_functions.get(test_code)
+
+    if not calculate_fn:
+        return "Invalid test code", 400
+
+    scores = calculate_fn(national_id)
+
+    return render_template("results.html", test_name=test_names[test_code], national_id=national_id, result=scores)
+
+# ----------------- Run the App --------------------
+
+if __name__ == "__main__":
+    app.run(debug=True)
