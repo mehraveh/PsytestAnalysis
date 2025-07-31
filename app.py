@@ -26,7 +26,7 @@ test_functions = {
     "CSBS": calculate_csbs_scores,
     "CBCL": calculate_cbcl_scores,
     "SCRS": calculate_scrs_scores,
-    "RIGHT_ANGLE": calculate_anger_scores
+    "ANGER": calculate_anger_scores
 }
 
 test_names = {
@@ -34,7 +34,7 @@ test_names = {
     "CSBS": "مقیاس رفتار اجتماعی کودک",
     "CBCL": "چک‌لیست رفتاری کودکان",
     "SCRS": "مقیاس عرجبی خودکنترلی",
-    "RIGHT_ANGLE": "پرسش‌نامه پرخاشگری رابطه‌ای و آشکار"
+    "ANGER": "پرسش‌نامه پرخاشگری رابطه‌ای و آشکار"
 }
 
 # ----------------- Routes --------------------
