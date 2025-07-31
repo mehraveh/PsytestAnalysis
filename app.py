@@ -17,7 +17,42 @@ def calculate_scrs_scores(national_id):
     return {"عامل ۱": random.randint(5, 20), "عامل ۲": random.randint(5, 20), "عامل ۳": random.randint(5, 20)}
 
 def calculate_anger_scores(national_id):
-    return {"عامل ۱": random.randint(5, 15), "عامل ۲": random.randint(5, 15), "عامل ۳": random.randint(5, 15)}
+
+        # Score map
+    score_map = {
+        'هرگز یا به ندرت': 1,
+        'یک‌ بار در ماه': 2,
+        'یک بار در هفته': 3,
+        'اغلب روزا': 4,
+    }
+    
+    # Identify columns for each factor
+    columns = df.columns
+    factor_1_cols = columns[10:17]  # Q7-Q13
+    factor_2_cols = columns[17:25]  # Q14-Q21
+    factor_3_cols = columns[4:10]   # Q1-Q6
+    row = df[df['کد ملی'] == national_id]
+    gender = row['جنسیت'].values[0].strip()
+    if row.empty:
+        return {"error": f"دانش‌آموزی با کد ملی '{NCode}' یافت نشد."}
+    def score_factor(cols):
+        return sum(score_map.get(str(row[col].values[0]).strip(), 0) for col in cols)
+
+    f1 = score_factor(factor_1_cols)
+    f2 = score_factor(factor_2_cols)
+    f3 = score_factor(factor_3_cols)
+
+    result = {
+        'نام': name,
+        'جنسیت': gender,
+        'عامل ۱': f1,
+        'پرخاشگر عامل ۱': f1 > (8 if gender == 'دختر' else 10),
+        'عامل ۲': f2,
+        'پرخاشگر عامل ۲': f2 > (18 if gender == 'دختر' else 17),
+        'عامل ۳': f3,
+        'پرخاشگر عامل ۳': f3 > (15 if gender == 'دختر' else 16)
+    }
+    return result
 
 # Mapping of test codes to function references
 test_functions = {
