@@ -36,6 +36,7 @@ def calculate_anger_scores(national_id):
     factor_2_cols = columns[17:25]  # Q14-Q21
     factor_3_cols = columns[4:10]   # Q1-Q6
     row = df[df['کد ملی'] == national_id]
+    print(len(row))
     gender = row['جنسیت'].values[0].strip()
     if row.empty:
         return {"error": f"دانش‌آموزی با کد ملی '{NCode}' یافت نشد."}
