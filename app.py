@@ -45,7 +45,7 @@ def home():
         test = request.form.get("test_name")
         national_id = request.form.get("national_id")
         if test not in test_functions:
-            return render_template("form.html", tests=test_names, result={"error": "آزمون نامعتبر است"})
+            return render_template("index.html", tests=test_names, result={"error": "آزمون نامعتبر است"})
 
         return redirect(url_for("results", test_code=test, national_id=national_id))
     return render_template("index.html", tests=test_names)
