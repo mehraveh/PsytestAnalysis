@@ -23,28 +23,43 @@
 <body>
     <div class="container">
         <h2 class="text-center mb-4">ارزیابی تست دانش‌آموز</h2>
-        <form method="POST" action="/results">
-            <div class="mb-3">
-                <label for="test_name" class="form-label">انتخاب آزمون:</label>
-                <select name="test_name" class="form-select" required>
-                    <option value="">-- انتخاب آزمون --</option>
-                    <option value="ANGER">پرسش‌نامه پرخاشگری رابطه‌ای و آشکار کودکان دبستانی</option>
-                    <option value="SCRS">مقیاس ارزیابی خودکنترلی</option>
-                    <option value="CBCL">چک‌لیست رفتاری کودکان (CBCL)</option>
-                    <option value="CSBS">مقیاس رفتار اجتماعی کودک (CSBS)</option>
-                    <option value="DERS">مقیاس دشواری‌های تنظیم هیجانی</option>
-                </select>
-            </div>
+        
+    <form method="POST" action="/choose">
+        <div class="mb-3">
+            <label for="test_name" class="form-label">انتخاب آزمون:</label>
+            <select name="test_name" class="form-select" id="test_name" required>
+                <option value="">-- انتخاب آزمون --</option>
+                <option value="ANGER">پرسش‌نامه پرخاشگری رابطه‌ای و آشکار کودکان دبستانی</option>
+                <option value="SCRS">مقیاس ارزیابی خودکنترلی</option>
+                <option value="CBCL">چک‌لیست رفتاری کودکان (CBCL)</option>
+                <option value="CSBS">مقیاس رفتار اجتماعی کودک (CSBS)</option>
+                <option value="DERS">مقیاس دشواری‌های تنظیم هیجانی</option>
+            </select>
+        </div>
 
-            <div class="mb-3">
-                <label for="national_id" class="form-label">کد ملی دانش‌آموز:</label>
-                <input type="text" name="national_id" class="form-control" required>
-            </div>
+        <div class="mb-3">
+            <label for="national_id" class="form-label">کد ملی دانش‌آموز:</label>
+            <input type="text" name="national_id" class="form-control" required>
+        </div>
 
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary">ارزیابی</button>
-            </div>
-        </form>
+        <div class="text-center">
+            <button type="submit" class="btn btn-primary">ارزیابی</button>
+        </div>
+    </form>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.querySelector("form");
+            const select = document.getElementById("test_name");
+
+            form.addEventListener("submit", function (event) {
+                const selectedValue = select.value;
+                if (selectedValue) {
+                    form.action = "/choose/" + selectedValue;
+                }
+            });
+        });
+    </script>
     </div>
 </body>
 </html>
