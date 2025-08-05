@@ -1,22 +1,146 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>نتایج آزمون</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>نتایج آزمون</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Vazirmatn', sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      padding: 2rem;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3 {
+      color: #2c3e50;
+    }
+
+    .result-box {
+      background: white;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 1rem auto;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+
+    .score-line {
+      font-size: 1.2rem;
+      margin-bottom: 0.8rem;
+      direction: rtl;
+    }
+
+    .score-line span {
+      unicode-bidi: plaintext;
+    }
+
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
 </head>
-<body class="bg-light">
-    <div class="container mt-5 bg-white p-4 rounded shadow">
-        <h2 class="text-center mb-4">نتایج آزمون</h2>
-        <p><strong>آزمون:</strong> {{ test_name }}</p>
-        <p><strong>کد ملی:</strong> {{ national_id }}</p>
-        <hr>
-        {% for factor, value in result.items() %}
-            <p><strong>{{ factor }}:</strong> {{ value }}</p>
-        {% endfor %}
-        <div class="text-center mt-4">
-            <a href="/" class="btn btn-secondary">بازگشت</a>
-        </div>
-    </div>
+<body>
+
+  <!-- دکمه بازگشت بالا -->
+  <div class="text-center mb-3 no-print">
+    <a href="/" class="btn btn-secondary">بازگشت</a>
+  </div>
+
+  <!-- محتوای اصلی قابل تبدیل به PDF -->
+  <div id="pdf-content" class="container mt-2 bg-white p-4 rounded shadow">
+
+    <h1 class="text-center mb-4">نتایج آزمون</h1>
+
+    <h2 class="mb-3">
+      <span style="color: #800000;">نام و نام خانوادگی &nbsp;&nbsp;&nbsp; </span>
+      <span style="unicode-bidi: plaintext;">{{ name }}</span>
+    </h2>
+    
+    <h3 class="mb-3">
+      <span style="color: #800000;">آزمون &nbsp;&nbsp;&nbsp; </span>
+      <span style="unicode-bidi: plaintext;">{{ test_name }}</span>
+    </h3>
+    
+    <h3 class="mb-4">
+      <span style="color: #800000;">کد ملی &nbsp;&nbsp;&nbsp;</span>
+      <span style="unicode-bidi: plaintext;">{{ national_id }}</span>
+    </h3>
+    
+    <hr>
+    {% for key, value in result.items() %}
+    {% if "نمره" in key %}
+      <table style="width: 100%; margin-bottom: 0.6rem; font-size: 1.2rem; direction: rtl;">
+        <tr>
+          <td style="white-space: nowrap; width: 1%;">{{ key }}&nbsp;&nbsp;&nbsp;</td>
+          <td style="text-align: start;">{{ value }}&nbsp;&nbsp;&nbsp;</td>
+        </tr>
+      </table>
+    {% endif %}
+  {% endfor %}
+
+    <hr class="my-4">
+
+    {% for factor, score in graph.items() %}
+      <div class="result-box text-center">
+        <h3 >{{ factor }}  <span style="unicode-bidi: plaintext;"> &nbsp;&nbsp;&nbsp;{{ score }}&nbsp;&nbsp;&nbsp;</span></h3>
+        <img class="img-fluid mx-auto d-block" src="{{ url_for('static', filename=charts[factor]) }}" alt="نمودار {{ factor }}">
+      </div>
+    {% endfor %}
+
+  </div>
+
+  <!-- دکمه دانلود PDF -->
+  <div class="text-center mt-4 no-print">
+    <button onclick="downloadPDF()" class="btn btn-primary">دانلود PDF کامل</button>
+  </div>
+<!-- مقداردهی اطلاعات پنهان برای استفاده در نام فایل -->
+<span id="info"
+      data-test="{{ test_name }}"
+      data-id="{{ national_id }}"
+      style="display: none;"></span>
+  <!-- html2pdf.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- تابع PDF -->
+  <script>
+function downloadPDF() {
+  const element = document.getElementById('pdf-content');
+
+  // دریافت اطلاعات برای نام فایل
+  const info = document.getElementById('info');
+  const testName = info.getAttribute('data-test').replace(/\s+/g, '-');
+  const nationalID = info.getAttribute('data-id');
+  const filename = `نتیجه-آزمون-${testName}-${nationalID}.pdf`;
+
+  const opt = {
+    margin:       0.5,
+    filename:     filename,
+    image:        { type: 'jpeg', quality: 0.98 },
+    html2canvas:  {
+      scale: 2,
+      scrollY: 0,
+      useCORS: true
+    },
+    jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' },
+    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+  };
+  html2pdf().set(opt).from(element).save();
+}
+  </script>
+
 </body>
 </html>
