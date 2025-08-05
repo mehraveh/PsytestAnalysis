@@ -1,6 +1,6 @@
-flask
+Flask
 pandas
-gunicorn
-plotly
-kaleido
+plotly==5.17.0
 python-docx
+gunicorn
+kaleido==0.2.1
