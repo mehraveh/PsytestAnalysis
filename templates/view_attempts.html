@@ -1,0 +1,52 @@
+<!-- templates/view_attempts.html -->
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>انتخاب تلاش آزمون</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
+    <style>
+        .attempt-form {
+            margin-bottom: 10px;
+        }
+        .attempt-button {
+            background: none;
+            border: none;
+            color: #0d6efd;
+            text-decoration: underline;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .attempt-button:hover {
+            color: #0a58ca;
+        }
+    </style>
+</head>
+<body class="container mt-5">
+
+    <h3 class="mb-4">تلاش‌های یافت‌شده برای آزمون: {{ test_names[test_code] }}</h3>
+
+    {% if attempts %}
+        <p>لطفاً یکی از تلاش‌های زیر را برای مشاهده نتایج انتخاب کنید:</p>
+        <ul class="list-group">
+            {% for attempt in attempts %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <form method="POST" action="/results">
+                  <input type="hidden" name="national_id" value="{{ national_id }}">
+                  <input type="hidden" name="test_code" value="{{ test_code }}">
+                  <input type="hidden" name="timestamp" value="{{ attempt['Timestamp'] }}">
+                  <button type="submit" class="btn btn-outline-primary">
+                    {{ attempt['Timestamp'] }}
+                  </button>
+                </form>
+              </li>
+            {% endfor %}
+          </ul>
+    {% else %}
+        <p class="text-danger">هیچ تلاش فعالی یافت نشد.</p>
+    {% endif %}
+
+    <a href="/" class="btn btn-secondary mt-4">بازگشت به خانه</a>
+
+</body>
+</html>
