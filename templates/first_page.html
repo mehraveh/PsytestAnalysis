@@ -1,59 +1,170 @@
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>انتخاب آزمون</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700&display=swap" rel="stylesheet" />
   <style>
-    body {
-      font-family: Vazir, sans-serif;
-      background-color: #f2f2f2;
-      text-align: center;
-      padding: 40px;
+    :root{
+      --bg: #f7f8fc;
+      --text: #253046;
+      --muted: #6e7a8a;
+
+      /* softer palette */
+      --primary:  #9dbafc;   /* soft blue */
+      --primary-2:#7ea4fa;   /* slightly deeper */
+      --accent:   #74d1ee;   /* soft sky for badge */
+
+      --card:     #ffffff;
+      --border:   #e8ecf4;
+      --radius:   14px;
+      --shadow:   0 8px 24px rgba(0,0,0,.06);
+      --shadow-sm:0 3px 12px rgba(0,0,0,.05);
     }
 
-    h1 {
-      color: #333;
-      margin-bottom: 40px;
+    *{ box-sizing:border-box }
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:'Vazirmatn',sans-serif;
     }
 
-    .test-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
+    .page{
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: clamp(16px, 4vw, 40px);
     }
 
-    .test-button {
-      padding: 15px 25px;
-      font-size: 18px;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: 0.3s ease;
+    .header{
+      text-align:center;
+      margin-bottom: clamp(16px,4vw,28px);
+    }
+    .title{
+      font-size: clamp(20px,4.8vw,32px);
+      font-weight: 800;
+      margin: 0 0 6px;
+      letter-spacing: -.2px;
+    }
+    .subtitle{
+      font-size: clamp(13px,2.6vw,16px);
+      color: var(--muted);
+      margin:0;
     }
 
-    .test-button:hover {
-      background-color: #45a049;
+    /* grid that works nicely with 4 items */
+    .grid{
+      display: grid;
+      gap: clamp(12px, 3vw, 20px);
+      grid-template-columns: repeat( auto-fit, minmax(240px, 1fr) );
+      align-items: stretch;
+    }
+
+    .btn-card{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-decoration:none;
+      text-align:center;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: clamp(16px, 3.2vw, 22px);
+      min-height: clamp(56px, 12vw, 72px);
+      font-size: clamp(15px, 3.6vw, 18px);
+      font-weight: 700;
+      box-shadow: var(--shadow-sm);
+      transition: transform .08s ease, box-shadow .25s ease, border-color .2s ease, background-color .2s ease;
+    }
+    .btn-card:hover,
+    .btn-card:focus-visible{
+      transform: translateY(-1px);
+      box-shadow: var(--shadow);
+      border-color: #dfe5f2;
+    }
+
+    /* soft primary for questionnaires */
+    .btn-primary{
+      background: linear-gradient(180deg, var(--primary), var(--primary-2));
+      color: #0f223a;
+      border: 1px solid rgba(126,164,250,.35);
+    }
+    .btn-primary:hover,
+    .btn-primary:focus-visible{
+      background: linear-gradient(180deg, #a8c2fd, #8eb2fb);
+      box-shadow: 0 10px 26px rgba(126,164,250,.22);
+    }
+
+    /* Results — centered & distinct (outlined) */
+    .btn-results{
+      position: relative;
+      background: var(--card);
+      border: 2px solid var(--primary);
+      color: #1f3257;
+      font-weight: 800;
+      /* center it nicely and limit width */
+      grid-column: 1 / -1;
+      max-width: 420px;
+      justify-self: center;
+    }
+    .btn-results::after{
+      content: "نتایج";
+      position: absolute;
+      top: -10px;
+      inset-inline-start: 14px;
+      background: var(--accent);
+      color: #0b2333;
+      font-weight: 800;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      box-shadow: 0 6px 14px rgba(116,209,238,.25);
+    }
+    .btn-results:hover,
+    .btn-results:focus-visible{
+      border-color: var(--primary-2);
+      box-shadow: 0 10px 24px rgba(126,164,250,.18);
+      transform: translateY(-1.5px);
+    }
+
+    /* on very small screens: one per row */
+    @media (max-width: 420px){
+      .grid{ grid-template-columns: 1fr; }
+      .btn-results{ max-width: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      .btn-card{ transition:none }
     }
   </style>
 </head>
 <body>
 
-  <h1>لطفاً آزمون مورد نظر خود را انتخاب کنید</h1>
+  <main class="page">
+    <header class="header">
+      <h1 class="title">لطفاً آزمون مورد نظر خود را انتخاب کنید</h1>
+    </header>
 
-  <div class="test-container">
-    <a class="test-button" href="/" target="_blank"> درحال آماده‌سازی</a>
-    <a class="test-button" href="/" target="_blank"> درحال آماده‌سازی</a>
-    <a class="test-button" href="/" target="_blank"> درحال آماده‌سازی</a>
-    <a class="test-button" href="/" target="_blank"> درحال آماده‌سازی</a>
-    <a class="test-button" href="/" target="_blank">درحال آماده‌سازی </a>
-    <a class="test-button" href="https://docs.google.com/forms/d/e/1FAIpQLScY77_gaVYaRJl2XGJ-vLKCjJSdogtM3Voat7uox7sqGueaLA/viewform?usp=dialog" target="_blank"> مقیاس ارزیابی خودکنترلی</a>
-    <a class="test-button" href="https://docs.google.com/forms/d/e/1FAIpQLScIyiQZdg3e1y0HgEeB6X9uTT_YG1nqQrOLu20jVi9OuV7xLg/viewform" target="_blank">پرسش‌نامه پرخاشگری رابطه‌ای و آشکار</a>
-    <a class="test-button" href="/results_page" target="_blank">نتایج آزمون‌ها </a>
-  </div>
+    <section class="grid">
+      <!-- three questionnaires -->
+      <a class="btn-card btn-primary" href="/" target="_blank">در حال آماده‌سازی</a>
+
+      <a class="btn-card btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLScY77_gaVYaRJl2XGJ-vLKCjJSdogtM3Voat7uox7sqGueaLA/viewform?usp=dialog" target="_blank">
+        مقیاس ارزیابی خودکنترلی
+      </a>
+
+      <a class="btn-card btn-primary" href="https://docs.google.com/forms/d/e/1FAIpQLScIyiQZdg3e1y0HgEeB6X9uTT_YG1nqQrOLu20jVi9OuV7xLg/viewform" target="_blank">
+        پرسش‌نامه پرخاشگری رابطه‌ای و آشکار
+      </a>
+
+      <!-- centered Results button -->
+      <a class="btn-card btn-results" href="/results_page" target="_blank">
+        نتایج آزمون‌ها
+      </a>
+    </section>
+  </main>
 
 </body>
 </html>
