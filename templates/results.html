@@ -221,36 +221,50 @@
   <script>
     (function () {
       const btn = document.getElementById("download-docx");
-
+  
       if (!btn) return;
       const payload = {
         national_id: "{{ national_id }}",
         test_name:   "{{ test_name }}",
         name:        "{{ name }}",
         phone:       "{{ phone }}",
-        test_code:   "{{test_code}}",
-        timestamp:   "{{timestamp}}",
+        test_code:   "{{ test_code }}",
+        timestamp:   "{{ timestamp }}",
         result: JSON.parse('{{ result | tojson | safe }}'),
         graph:  JSON.parse('{{ graph  | tojson | safe }}'),
         charts: JSON.parse('{{ charts | tojson | safe }}'),
       };
-
+  
       btn.addEventListener("click", function () {
         fetch("/results-docx", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         })
-        .then(function (res) { return res.blob(); })
-        .then(function (blob) {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "نتایج-آزمون.docx";
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          URL.revokeObjectURL(url);
+        .then(function (res) {
+          // گرفتن اسم فایل از هدر Content-Disposition
+          const cd = res.headers.get("Content-Disposition") || "";
+          let filename = "report.docx";
+  
+          let m = cd.match(/filename\*=(?:UTF-8''|)([^;]+)/i);
+          if (m && m[1]) {
+            try { filename = decodeURIComponent(m[1].replace(/["']/g, "")); }
+            catch (e) { filename = m[1].replace(/["']/g, ""); }
+          } else {
+            m = cd.match(/filename="?([^"]+)"?/i);
+            if (m && m[1]) filename = m[1];
+          }
+  
+          return res.blob().then(function (blob) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename; // ← استفاده از اسم سرور
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+          });
         })
         .catch(function (err) {
           console.error("DOCX download failed:", err);
