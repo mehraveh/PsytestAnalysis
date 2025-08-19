@@ -4,3 +4,5 @@ plotly==5.17.0
 python-docx
 gunicorn
 kaleido==0.2.1
+python-docx
+htmldocx>=0.0.6
