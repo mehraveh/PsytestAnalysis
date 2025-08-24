@@ -1,63 +1,119 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>ارزیابی تست</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <style>
-        body {
-            background-color: #f2f4f6;
-            font-family: "Vazirmatn", sans-serif;
-            padding-top: 50px;
-        }
-        .container {
-            max-width: 700px;
-            background-color: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>ارزیابی تست</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet" />
+  <style>
+    :root{
+      --bg:#f2f4f6;
+    }
+    body{
+      background: var(--bg);
+      font-family: "Vazirmatn", sans-serif;
+    }
+    .card{
+      border: 0;
+      border-radius: 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+    .title{
+      font-weight: 800;
+      letter-spacing: -.2px;
+      font-size: clamp(20px, 4.8vw, 28px);
+    }
+    .desc{
+      color:#667085;
+      font-size: clamp(13px, 3.2vw, 15px);
+    }
+    /* slightly larger controls on small screens for easier tapping */
+    @media (max-width: 480px){
+      .form-control, .form-select { padding: .9rem .85rem; font-size: 1.05rem; }
+      .btn { padding: .8rem 1.1rem; font-size: 1.05rem; }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2 class="text-center mb-4">ارزیابی تست دانش‌آموز</h2>
-        
-    <form method="POST" action="/choose">
-        <div class="mb-3">
-            <label for="test_name" class="form-label">انتخاب آزمون:</label>
-            <select name="test_name" class="form-select" id="test_name" required>
-                <option value="">-- انتخاب آزمون --</option>
+
+  <main class="container py-4 py-sm-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card p-3 p-sm-4 p-lg-5">
+          <h2 class="title text-center mb-2">ارزیابی تست دانش‌آموز</h2>
+          <p class="desc text-center mb-4">لطفاً آزمون را انتخاب و کد ملی را وارد کنید.</p>
+
+          <form method="POST" action="/choose" id="choose-form" novalidate>
+            <div class="mb-3">
+              <label for="test_name" class="form-label">انتخاب آزمون</label>
+              <select name="test_name" id="test_name" class="form-select" required>
+                <option value="" selected disabled>-- انتخاب آزمون --</option>
                 <option value="ANGER">پرسش‌نامه پرخاشگری رابطه‌ای و آشکار کودکان دبستانی</option>
                 <option value="SCRS">مقیاس ارزیابی خودکنترلی</option>
-            </select>
+              </select>
+              <div class="invalid-feedback">یکی از آزمون‌ها را انتخاب کنید.</div>
+            </div>
+
+            <div class="mb-4">
+              <label for="national_id" class="form-label">کد ملی دانش‌آموز</label>
+              <input
+                type="text"
+                id="national_id"
+                name="national_id"
+                class="form-control"
+                inputmode="numeric"
+                pattern="[0-9۰-۹]{1,}"
+                placeholder="مثلاً 1234567890"
+                required
+              />
+              <div class="form-text">فقط عدد وارد کنید.</div>
+              <div class="invalid-feedback">کد ملی معتبر وارد کنید.</div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">ارزیابی</button>
+            </div>
+          </form>
+
         </div>
-
-        <div class="mb-3">
-            <label for="national_id" class="form-label">کد ملی دانش‌آموز:</label>
-            <input type="text" name="national_id" class="form-control" required>
-        </div>
-
-        <div class="text-center">
-            <button type="submit" class="btn btn-primary">ارزیابی</button>
-        </div>
-    </form>
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const form = document.querySelector("form");
-            const select = document.getElementById("test_name");
-
-            form.addEventListener("submit", function (event) {
-                const selectedValue = select.value;
-                if (selectedValue) {
-                    form.action = "/choose/" + selectedValue;
-                }
-            });
-        });
-    </script>
+      </div>
     </div>
+  </main>
+
+  <script>
+    // boost UX on mobile & keep your original route switch
+    (function () {
+      const form   = document.getElementById("choose-form");
+      const select = document.getElementById("test_name");
+      const nid    = document.getElementById("national_id");
+
+      // client-side required validation styling
+      form.addEventListener("submit", function (e) {
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+        form.classList.add('was-validated');
+
+        const selectedValue = select.value;
+        if (selectedValue) {
+          form.action = "/choose/" + selectedValue;
+        }
+      });
+
+      // normalize Persian digits to English before submit (optional)
+      function faToEnDigits(s){
+        const fa="۰۱۲۳۴۵۶۷۸۹"; const en="0123456789";
+        return (s||"").replace(/[۰-۹]/g, d => en[fa.indexOf(d)]);
+      }
+      nid.addEventListener("input", function(){
+        this.value = this.value.replace(/[^\d۰-۹]/g, ""); // keep only digits
+      });
+      form.addEventListener("submit", function(){
+        nid.value = faToEnDigits(nid.value);
+      });
+    })();
+  </script>
+
 </body>
 </html>
-
