@@ -13,6 +13,45 @@
       background: var(--bg);
       font-family: "Vazirmatn", sans-serif;
     }
+    .header-hero {
+  background: #fff;
+  padding: 2px;
+}
+
+.hero-logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.side-logo img {
+  max-height: 80px;
+}
+
+.crescent-wrap {
+  position: relative;
+  flex: 1 1 40%;
+  min-width: 250px;
+}
+
+.crescent-logo {
+  position: absolute;
+  width: 60px;   /* سایز جدید */
+  height: auto;
+  top: 40%;
+  transform: translateY(-50%);
+}
+
+/* لوگوی سمت چپ */
+.crescent-logo.logo-left { 
+  left: 15%;     /* فاصله از چپ */
+}
+
+/* لوگوی سمت راست */
+.crescent-logo.logo-right { 
+  right: 15%;    /* فاصله از راست */
+}
     .card{
       border: 0;
       border-radius: 14px;
@@ -40,6 +79,26 @@
     <div class="row justify-content-center">
       <div class="col-12 col-md-8 col-lg-6">
         <div class="card p-3 p-sm-4 p-lg-5">
+          <div class="header-hero mb-4">
+            <div class="hero-logos">
+          
+              <!-- هلال وسط + دو لوگو -->
+              <div class="crescent-wrap">
+                <!-- تصویر هلال -->
+                <img src="{{ url_for('static', filename='img/crescent_header.png') }}" 
+                     alt="هلال" style="width:100%; height:auto;">
+          
+                <!-- دو لوگو روی هلال -->
+                <img class="crescent-logo logo-left"
+                     src="{{ url_for('static', filename='img/cli.ico') }}"
+                     alt="لوگو چپ">
+                <img class="crescent-logo logo-right"
+                     src="{{ url_for('static', filename='img/cli2.ico') }}"
+                     alt="لوگو راست">
+              </div>
+          
+            </div>
+          </div>
           <h2 class="title text-center mb-2">ارزیابی تست دانش‌آموز</h2>
           <p class="desc text-center mb-4">لطفاً آزمون را انتخاب و کد ملی را وارد کنید.</p>
 
@@ -50,12 +109,14 @@
                 <option value="" selected disabled>-- انتخاب آزمون --</option>
                 <option value="ANGER"> پرسش‌نامه سنجش مهارت‌های مدیریت پرخاش </option>
                 <option value="SCRS">پرسش‌نامه سنجش مهارت‌های قانون پذیری و تعهد</option>
+                <option value="CSBS"> پرسش‌نامه هوش اجتماعی کودک </option>
+                <option value="DERS"> پرسش‌نامه هوش هیجانی کودک </option>
               </select>
               <div class="invalid-feedback">یکی از آزمون‌ها را انتخاب کنید.</div>
             </div>
 
             <div class="mb-4">
-              <label for="national_id" class="form-label">کد ملی دانش‌آموز</label>
+              <label for="national_id" class="form-label">کد ملی / شماره تلفن</label>
               <input
                 type="text"
                 id="national_id"
