@@ -87,7 +87,7 @@
       .attempt-meta{ justify-content:space-between; }
     }
   </style>
-</head>
+</head> 
 <body>
   <main class="page">
     <h3>تلاش‌های یافت‌شده برای آزمون: {{ test_names[test_code] }}</h3>
@@ -96,6 +96,7 @@
       <p class="hint">لطفاً یکی از تلاش‌ها را برای مشاهدهٔ نتایج انتخاب کنید:</p>
       <ul class="list-group">
         {% for attempt in attempts %}
+       
           <li class="list-group-item">
             <form method="POST" action="/results" class="attempt-form m-0">
               <input type="hidden" name="national_id" value="{{ national_id }}">
@@ -103,6 +104,7 @@
               <input type="hidden" name="timestamp" value="{{ attempt['Timestamp'] }}">
               <input type="hidden" name="gender" value="{{ attempt['جنسیت'] }}">
               <input type="hidden" name="phone" value="{{ attempt['شماره تلفن'] }}">
+              <input type="hidden" name="age" value="{{ attempt['سن'] }}">
 
               <!-- We render the Persian date + name via JS for best formatting -->
               <button type="submit"
