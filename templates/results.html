@@ -14,6 +14,7 @@
       color: #333;
       padding: 2rem;
       line-height: 1.6;
+  
     }
     h1, h2, h3 { color: #2c3e50; }
 
@@ -22,7 +23,6 @@
       padding: 1.25rem;
       margin-bottom: 1rem;
       border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,.06);
     }
 
     .meta-line{
@@ -42,6 +42,7 @@
       font-weight: 700;
       font-size: .95rem;
       white-space: nowrap;
+
     }
     .chip-score { background:#eef2ff; color:#1f2a44; }
     .chip-ok    { background:#dcfce7; color:#065f46; }
@@ -65,7 +66,48 @@
     height: 60px;         /* adjust size */
     width: auto;          /* keep aspect ratio */
   }
-    @media print { .no-print { display:none !important; } }
+  
+    @media print { .no-print { display:none !important; } 
+  }
+  .header-hero {
+  background: #fff;
+  padding: 1px;
+}
+
+.hero-logos {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.side-logo img {
+  max-height: 80px;
+}
+
+.crescent-wrap {
+  position: relative;
+  flex: 1 1 40%;
+  min-width: 250px;
+}
+
+.crescent-logo {
+  position: absolute;
+  width: 120px;   /* سایز جدید */
+  height: auto;
+  top: 40%;
+  transform: translateY(-50%);
+}
+
+/* لوگوی سمت چپ */
+.crescent-logo.logo-left { 
+  left: 15%;     /* فاصله از چپ */
+}
+
+/* لوگوی سمت راست */
+.crescent-logo.logo-right { 
+  right: 15%;    /* فاصله از راست */
+}
   </style>
 </head>
 <body>
@@ -78,31 +120,71 @@
   </div>
   {% endif %}
 
+{% if not for_docx %}
   <!-- محتوای اصلی -->
-  <div id="pdf-content" class="container mt-2 bg-white p-4 rounded shadow">
-
-    <h1 class="text-center mb-4">نتایج آزمون</h1>
+  <div class=" mt-2 bg-white p-4 rounded shadow">
+      <!-- === هدر سه تصویری با هلال وسط === -->
+      <div class="header-hero mb-4">
+        <div class="hero-logos">
+      
+          <!-- هلال وسط + دو لوگو -->
+          <div class="crescent-wrap">
+            <!-- تصویر هلال -->
+            <img src="{{ url_for('static', filename='img/crescent_header.png') }}" 
+                 alt="هلال" style="width:100%; height:auto;">
+      
+            <!-- دو لوگو روی هلال -->
+            <img class="crescent-logo logo-left"
+                 src="{{ url_for('static', filename='img/cli.ico') }}"
+                 alt="لوگو چپ">
+            <img class="crescent-logo logo-right"
+                 src="{{ url_for('static', filename='img/cli2.ico') }}"
+                 alt="لوگو راست">
+          </div>
+      
+        </div>
+      </div>
+  </div>
+  {% else %}
+  <div class=" bg-white p-4 rounded ">
+    <div class="header-hero mb-4">
+      <div class="hero-logos">
+        <div class="crescent-wrap">
+          <!-- main crescent image -->
+          <img class="crescent-main"
+               src="{{ url_for('static', filename='img/' ~ imgs, _external=True) }}"
+               alt="هلال">
+        </div>
+      </div>
+    </div>
+  </div>
+{% endif %}
+<!-- === پایان هدر === -->
+<br>
+<hr>
+<br>
+    <h1 class="text-center mb-4">نتایج آزمون {{ test_name }}</h1>
 
     <!-- هدرها با فاصلهٔ امن برای Word -->
     <p class="mb-2">
-      <strong style="color:#800000;">نام و نام خانوادگی&nbsp;:&nbsp;</strong>
-      <span style="unicode-bidi:plaintext">{{ name }}</span>
-    </p>
-    <p class="mb-2">
-      <strong style="color:#800000;">آزمون&nbsp;:&nbsp;</strong>
-      <span style="unicode-bidi:plaintext">{{ test_name }}</span>
+      <strong style="color:#800000;">نام و نام خانوادگی &nbsp;:&nbsp;</strong>
+      <strong style="unicode-bidi:plaintext">{{ name }}</strong>
     </p>
     <p class="mb-3">
-      <strong style="color:#800000;">کد ملی&nbsp;:&nbsp;</strong>
-      <span style="unicode-bidi:plaintext">{{ national_id }}</span>
+      <strong style="color:#800000;">سن &nbsp;:&nbsp;</strong>
+      <strong style="unicode-bidi:plaintext">{{ age }}</strong>
     </p>
     <p class="mb-3">
-      <strong style="color:#800000;">شماره تلفن&nbsp;:&nbsp;</strong>
-      <span style="unicode-bidi:plaintext">{{ phone }}</span>
+      <strong style="color:#800000;">کد ملی &nbsp;:&nbsp;</strong>
+      <strong style="unicode-bidi:plaintext">{{ national_id }}</strong>
+    </p>
+    <p class="mb-3">
+      <strong style="color:#800000;">شماره تلفن &nbsp;:&nbsp;</strong>
+      <strong style="unicode-bidi:plaintext">{{ phone }}</strong>
     </p>
     <p class="mb-3">
       <strong style="color:#800000;">تاریخ &nbsp;:&nbsp;</strong>
-      <span style="unicode-bidi:plaintext">{{ timestamp }}</span>
+      <strong style="unicode-bidi:plaintext">{{ timestamp }}</strong>
     </p>
 
     <hr>
@@ -210,6 +292,25 @@
         {% endif %}
 
     {% endfor %}
+    <hr>
+    <style>
+      .tight-text p {
+        margin: 2px 0; /* reduce vertical spacing */
+      }
+    </style>
+    
+    <div class="mt-4 tight-text">
+      <strong style="white-space: pre-line;">
+        {% set entry = DEF["tests"][test_name] %}
+        <h3 class="text-center">{{ entry.title }}</h3>
+        {% for sub, lines in entry.subscales.items() %}
+          <h4>{{ sub }}</h4>
+          {% for ln in lines %}
+            <p>{{ ln }}</p>
+          {% endfor %}
+        {% endfor %}
+      </strong>
+    </div>
     <p>{{msg}}</p>
   </div>
   {% if not for_docx %}
@@ -230,6 +331,7 @@
         phone:       "{{ phone }}",
         test_code:   "{{ test_code }}",
         timestamp:   "{{ timestamp }}",
+        age:         "{{age}}",
         result: JSON.parse('{{ result | tojson | safe }}'),
         graph:  JSON.parse('{{ graph  | tojson | safe }}'),
         charts: JSON.parse('{{ charts | tojson | safe }}'),
